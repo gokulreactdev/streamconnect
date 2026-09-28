@@ -14,8 +14,9 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: "12px",
     overflow: "hidden",
     [theme.breakpoints.down("xs")]: {
-      minHeight: "60vh",
-      maxHeight: "70vh",
+      minHeight: "82vh",
+      maxHeight: "88vh",
+      height: "88vh",
     },
   },
   remoteVideo: {
@@ -26,8 +27,9 @@ const useStyles = makeStyles((theme) => ({
     display: "block",
     borderRadius: "12px",
     [theme.breakpoints.down("xs")]: {
-      height: "60vh",
-      minHeight: "420px",
+      height: "82vh",
+      minHeight: "500px",
+      maxHeight: "88vh",
     },
   },
   localVideo: {
@@ -102,8 +104,9 @@ const useStyles = makeStyles((theme) => ({
     display: "block",
     borderRadius: "12px",
     [theme.breakpoints.down("xs")]: {
-      height: "48vh",
-      minHeight: "320px",
+      height: "68vh",
+      minHeight: "430px",
+      maxHeight: "72vh",
     },
   },
   localLarge: {
@@ -115,8 +118,9 @@ const useStyles = makeStyles((theme) => ({
     background: "#000",
     display: "block",
     [theme.breakpoints.down("xs")]: {
-      height: "48vh",
-      minHeight: "320px",
+      height: "68vh",
+      minHeight: "430px",
+      maxHeight: "72vh",
     },
   },
   noCall: {
