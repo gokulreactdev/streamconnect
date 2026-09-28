@@ -16,6 +16,17 @@ const socketOptions = {
 };
 
 const socket = io(backendUrl, socketOptions);
+const peerConfig = {
+  iceServers: [
+    { urls: "stun:stun.l.google.com:19302" },
+    { urls: "stun:stun1.l.google.com:19302" },
+    { urls: "stun:stun2.l.google.com:19302" },
+    { urls: "stun:stun3.l.google.com:19302" },
+    { urls: "stun:stun4.l.google.com:19302" },
+  ],
+  iceCandidatePoolSize: 0,
+};
+
 // Debug logs for socket connection
 console.log("Socket backendUrl:", backendUrl);
 socket.on("connect", () => console.log("Socket connected (client)", socket.id));
@@ -40,6 +51,22 @@ const SocketContextProvider = ({ children }) => {
   const myVideoRef = useRef();
   const userVideoRef = useRef();
   const connectPeerRef = useRef();
+
+  const attachRemoteStream = (remoteStream) => {
+    if (!remoteStream) return;
+
+    if (userVideoRef.current) {
+      userVideoRef.current.srcObject = remoteStream;
+    }
+
+    if (userVideoRef.current?.play) {
+      userVideoRef.current.play().catch(() => {
+        console.warn(
+          "Remote video autoplay was blocked; user interaction is required",
+        );
+      });
+    }
+  };
 
   useEffect(() => {
     const requestMedia = () => {
@@ -134,7 +161,12 @@ const SocketContextProvider = ({ children }) => {
       prevCall ? { ...prevCall, isReceivingCall: false } : prevCall,
     );
 
-    const peer = new Peer({ initiator: false, trickle: false, stream });
+    const peer = new Peer({
+      initiator: false,
+      trickle: false,
+      stream,
+      config: peerConfig,
+    });
 
     peer.on("signal", (data) => {
       const target = call.from;
@@ -145,7 +177,16 @@ const SocketContextProvider = ({ children }) => {
     });
 
     peer.on("stream", (currentStream) => {
-      if (userVideoRef.current) userVideoRef.current.srcObject = currentStream;
+      attachRemoteStream(currentStream);
+    });
+
+    peer.on("track", (track, currentStream) => {
+      if (currentStream) {
+        attachRemoteStream(currentStream);
+      } else if (track) {
+        const streamWithTrack = new MediaStream([track]);
+        attachRemoteStream(streamWithTrack);
+      }
     });
 
     peer.on("error", (err) => {
@@ -178,7 +219,12 @@ const SocketContextProvider = ({ children }) => {
     });
     setRemotePeerId(id);
 
-    const peer = new Peer({ initiator: true, trickle: false, stream });
+    const peer = new Peer({
+      initiator: true,
+      trickle: false,
+      stream,
+      config: peerConfig,
+    });
 
     peer.on("signal", (data) => {
       const callerId = me || socket.id;
@@ -192,7 +238,16 @@ const SocketContextProvider = ({ children }) => {
     });
 
     peer.on("stream", (currentStream) => {
-      if (userVideoRef.current) userVideoRef.current.srcObject = currentStream;
+      attachRemoteStream(currentStream);
+    });
+
+    peer.on("track", (track, currentStream) => {
+      if (currentStream) {
+        attachRemoteStream(currentStream);
+      } else if (track) {
+        const streamWithTrack = new MediaStream([track]);
+        attachRemoteStream(streamWithTrack);
+      }
     });
 
     peer.on("error", (err) => {
