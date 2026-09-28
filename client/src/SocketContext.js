@@ -52,6 +52,23 @@ const SocketContextProvider = ({ children }) => {
   const userVideoRef = useRef();
   const connectPeerRef = useRef();
 
+  const attachLocalStream = (currentStream) => {
+    if (!currentStream) return;
+
+    if (myVideoRef.current) {
+      myVideoRef.current.srcObject = currentStream;
+      myVideoRef.current.muted = true;
+    }
+
+    if (myVideoRef.current?.play) {
+      myVideoRef.current.play().catch(() => {
+        console.warn(
+          "Local video autoplay was blocked; user interaction is required",
+        );
+      });
+    }
+  };
+
   const attachRemoteStream = (remoteStream) => {
     if (!remoteStream) return;
 
@@ -76,7 +93,7 @@ const SocketContextProvider = ({ children }) => {
         .getUserMedia({ video: true, audio: true })
         .then((currentStream) => {
           setStream(currentStream);
-          if (myVideoRef.current) myVideoRef.current.srcObject = currentStream;
+          attachLocalStream(currentStream);
         })
         .catch((err) => {
           console.warn("getUserMedia error:", err);
@@ -134,7 +151,7 @@ const SocketContextProvider = ({ children }) => {
         audio: true,
       });
       setStream(currentStream);
-      if (myVideoRef.current) myVideoRef.current.srcObject = currentStream;
+      attachLocalStream(currentStream);
       return true;
     } catch (err) {
       console.warn("requestPermissions error:", err);

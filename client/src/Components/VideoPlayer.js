@@ -136,7 +136,7 @@ const useStyles = makeStyles((theme) => ({
 
 const VideoPlayer = () => {
   const styles = useStyles();
-  const [showRemoteFull, setShowRemoteFull] = useState(true);
+  const [showLocalFull, setShowLocalFull] = useState(false);
   const {
     name,
     callAccepted,
@@ -156,7 +156,7 @@ const VideoPlayer = () => {
         playsInline
         ref={userVideoRef}
         autoPlay
-        className={showRemoteFull ? styles.remoteVideo : styles.remoteSmall}
+        className={styles.remoteVideo}
       />
     </div>
   );
@@ -171,7 +171,7 @@ const VideoPlayer = () => {
         muted
         ref={myVideoRef}
         autoPlay
-        className={showRemoteFull ? styles.localVideo : styles.localLarge}
+        className={showLocalFull ? styles.localLarge : styles.localVideo}
       />
     </div>
   );
@@ -207,23 +207,14 @@ const VideoPlayer = () => {
     <Grid container justify="center">
       <Grid item xs={12}>
         <div className={styles.callContainer}>
-          {showRemoteFull ? (
-            <>
-              {renderRemoteVideo()}
-              {stream && renderLocalVideo()}
-            </>
-          ) : (
-            <>
-              {stream && renderLocalVideo()}
-              {renderRemoteVideo()}
-            </>
-          )}
+          {renderRemoteVideo()}
+          {stream && renderLocalVideo()}
           <Button
             variant="contained"
             className={styles.swapButton}
-            onClick={() => setShowRemoteFull((prev) => !prev)}
+            onClick={() => setShowLocalFull((prev) => !prev)}
           >
-            {showRemoteFull ? "Show me big" : "Show friend big"}
+            {showLocalFull ? "Back" : "Show my video"}
           </Button>
         </div>
       </Grid>
