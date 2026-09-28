@@ -52,6 +52,15 @@ const SocketContextProvider = ({ children }) => {
   const userVideoRef = useRef();
   const connectPeerRef = useRef();
 
+  const setMyVideoRef = (node) => {
+    myVideoRef.current = node;
+    if (node && stream) {
+      node.srcObject = stream;
+      node.muted = true;
+      node.play?.().catch(() => {});
+    }
+  };
+
   const attachLocalStream = (currentStream) => {
     if (!currentStream) return;
 
@@ -326,6 +335,7 @@ const SocketContextProvider = ({ children }) => {
         call,
         callAccepted,
         myVideoRef,
+        setMyVideoRef,
         userVideoRef,
         stream,
         permissionDenied,

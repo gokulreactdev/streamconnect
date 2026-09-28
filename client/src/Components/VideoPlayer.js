@@ -140,7 +140,7 @@ const VideoPlayer = () => {
   const {
     name,
     callAccepted,
-    myVideoRef,
+    setMyVideoRef,
     userVideoRef,
     callEnded,
     stream,
@@ -169,7 +169,7 @@ const VideoPlayer = () => {
       <video
         playsInline
         muted
-        ref={myVideoRef}
+        ref={setMyVideoRef}
         autoPlay
         className={showLocalFull ? styles.localLarge : styles.localVideo}
       />
@@ -188,7 +188,7 @@ const VideoPlayer = () => {
               <video
                 playsInline
                 muted
-                ref={myVideoRef}
+                ref={setMyVideoRef}
                 autoPlay
                 style={{
                   width: "100%",
